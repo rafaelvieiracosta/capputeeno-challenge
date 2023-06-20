@@ -1,21 +1,29 @@
 <template>
-  <header class="header container">
-    <router-link to="/" class="header__logo"> capputeeno </router-link>
+  <header class="header">
+    <div class="header-wrapper container">
+      <div class="header-line">
+        <router-link to="/" class="header__logo"> capputeeno </router-link>
 
-    <div class="header-wrapper">
-      <HeaderSearch class="header__search" />
+        <div class="header__search-and-cart">
+          <HeaderSearch v-if="$sw >= 768" class="header__search" />
 
-      <div class="header__cart">
-        <router-link to="/cart" class="header__cart-icon">
-          <img
-            src="@/assets/images/bag.svg"
-            alt="Sacola de compras"
-            width="24"
-            height="24"
-          />
-        </router-link>
-        <span class="header__cart-count">0</span>
+          <div class="header__cart">
+            <router-link to="/cart" class="header__cart-icon">
+              <img
+                src="@/assets/images/bag.svg"
+                alt="Sacola de compras"
+                width="24"
+                height="24"
+              />
+            </router-link>
+            <span v-if="itemsInCart > 0" class="header__cart-count">{{
+              itemsInCart
+            }}</span>
+          </div>
+        </div>
       </div>
+
+      <HeaderSearch v-if="$sw < 768" class="header__search" />
     </div>
   </header>
 </template>
@@ -28,24 +36,59 @@ export default {
   components: {
     HeaderSearch,
   },
+  computed: {
+    itemsInCart() {
+      return this.$store.getters.itemsInCart;
+    },
+  },
 };
 </script>
 
 <style scoped>
 .header {
+  background-color: var(--background);
+}
+.header-wrapper {
+  padding: 15px;
+}
+.header-line {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 20px;
+}
+@media (min-width: 768px) {
+  .header-wrapper {
+    padding: 0 15px;
+  }
 }
 
 /* HEADER: LOGO */
 .header__logo {
   font-family: "Saira Stencil One";
   font-weight: 400;
-  font-size: 40px;
-  line-height: 80px;
+  font-size: 30px;
   color: #5d5d6d;
   user-select: none;
+}
+@media (min-width: 768px) {
+  .header__logo {
+    font-size: 40px;
+    line-height: 80px;
+  }
+}
+
+/* HEADER: SEARCH AND CART WRAPPER */
+.header__search-and-cart {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 15px;
+}
+@media (min-width: 768px) {
+  .header__search-and-cart {
+    flex: 1;
+  }
 }
 
 /* HEADER: CART */
