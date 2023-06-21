@@ -1,0 +1,13 @@
+.animate {
+  cursor: progress;
+  background: var(--background-line) !important;
+  animation: loading infinite 0.8s ease-in-out alternate;
+}
+@keyframes loading {
+  from {
+    opacity: 0.9;
+  }
+  to {
+    opacity: 0.4;
+  }
+}
