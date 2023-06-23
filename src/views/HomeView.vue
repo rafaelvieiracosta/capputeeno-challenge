@@ -1,6 +1,10 @@
 <template>
   <main class="home container">
-    <transition name="fade" mode="out-in">
+    <div class="home__top-container">
+      <FilterByCategory class="home__filter" :class="{ 'no-click': loading }" />
+    </div>
+
+    <transition name="" mode="out-in">
       <div v-if="loading" class="home__grid" key="skeleton">
         <SkeletonCardProduct
           v-for="(_, index) in 12"
@@ -21,12 +25,15 @@
 
 <script>
 import CardProduct from "@/components/home/HomeCardProduct.vue";
+import FilterByCategory from "@/components/home/HomeFilterByCategory.vue";
+
 import SkeletonCardProduct from "@/components/home/HomeCardProductSkeleton.vue";
 
 export default {
   name: "HomeView",
   components: {
     CardProduct,
+    FilterByCategory,
     SkeletonCardProduct,
   },
   data() {
@@ -35,22 +42,42 @@ export default {
       loading: true,
     };
   },
+  watch: {
+    "$store.state.listing.category"() {
+      this.fetchProducts();
+    },
+  },
+  computed: {
+    currentCategory() {
+      return this.$store.state.listing.category === "all"
+        ? false
+        : this.$store.state.listing.category;
+    },
+  },
   methods: {
+    handleQuery() {
+      let query;
+      if (this.currentCategory) {
+        query = `query { allProducts(filter: { category: "${this.currentCategory}" }) { id image_url name price_in_cents } }`;
+      } else {
+        query =
+          "query { allProducts { id image_url name price_in_cents category } }";
+      }
+
+      return query;
+    },
     fetchProducts() {
       this.loading = true;
 
-      this.$requestExecutor(
-        "query { allProducts { id image_url name price_in_cents } }",
-        (success, response) => {
-          if (success) {
-            this.products = response.data?.allProducts;
+      this.$requestExecutor(this.handleQuery(), (success, response) => {
+        if (success) {
+          this.products = response.data?.allProducts;
 
-            setTimeout(() => {
-              this.loading = false;
-            }, 500);
-          }
+          setTimeout(() => {
+            this.loading = false;
+          }, 500);
         }
-      );
+      });
     },
   },
   mounted() {
@@ -60,6 +87,17 @@ export default {
 </script>
 
 <style scoped>
+.no-click {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.home__top-container {
+  margin-top: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 .home__grid {
   margin-top: 32px;
   display: grid;

@@ -25,6 +25,9 @@ button {
   background: none;
   border: none;
 }
+ul {
+  list-style: none;
+}
 .container {
   max-width: 1150px;
   padding: 0 15px;
