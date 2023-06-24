@@ -2,6 +2,7 @@
   <main class="home container">
     <div class="home__top-container">
       <FilterByCategory class="home__filter" :class="{ 'no-click': loading }" />
+      <OrderBy class="home__order" :class="{ 'no-click': loading }" />
     </div>
 
     <transition name="" mode="out-in">
@@ -26,6 +27,7 @@
 <script>
 import CardProduct from "@/components/home/HomeCardProduct.vue";
 import FilterByCategory from "@/components/home/HomeFilterByCategory.vue";
+import OrderBy from "@/components/home/HomeOrderBy.vue";
 
 import SkeletonCardProduct from "@/components/home/HomeCardProductSkeleton.vue";
 
@@ -34,6 +36,7 @@ export default {
   components: {
     CardProduct,
     FilterByCategory,
+    OrderBy,
     SkeletonCardProduct,
   },
   data() {
@@ -46,6 +49,12 @@ export default {
     "$store.state.listing.category"() {
       this.fetchProducts();
     },
+    "$store.state.listing.field"() {
+      this.fetchProducts();
+    },
+    "$store.state.listing.order"() {
+      this.fetchProducts();
+    },
   },
   computed: {
     currentCategory() {
@@ -53,11 +62,21 @@ export default {
         ? false
         : this.$store.state.listing.category;
     },
+    currentField() {
+      return this.$store.state.listing.field;
+    },
+    currentOrder() {
+      return this.$store.state.listing.order;
+    },
   },
   methods: {
     handleQuery() {
       let query;
-      if (this.currentCategory) {
+      if (this.currentCategory && this.currentField) {
+        query = `query { allProducts(filter: { category: "${this.currentCategory}" }, sortField: "${this.currentField}", sortOrder: "${this.currentOrder}") { id image_url name price_in_cents } }`;
+      } else if (this.currentField) {
+        query = `query { allProducts(sortField: "${this.currentField}", sortOrder: "${this.currentOrder}") { id image_url name price_in_cents } }`;
+      } else if (this.currentCategory) {
         query = `query { allProducts(filter: { category: "${this.currentCategory}" }) { id image_url name price_in_cents } }`;
       } else {
         query =
