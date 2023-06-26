@@ -1,8 +1,20 @@
 <template>
   <main class="home container">
-    <div class="home__top-container">
+    <div v-if="$sw >= 768" class="home__top-container">
       <FilterByCategory class="home__filter" :class="{ 'no-click': loading }" />
       <OrderBy class="home__order" :class="{ 'no-click': loading }" />
+    </div>
+    <div v-else class="home__top-container">
+      <h1 class="home__title">{{ currentCategoryTitle }}</h1>
+
+      <div class="home__buttons">
+        <button class="home--button" @click="openWrapperFilter = true">
+          Filtrar
+        </button>
+        <button class="home--button" @click="openWrapperOrder = true">
+          Ordernar
+        </button>
+      </div>
     </div>
 
     <transition name="" mode="out-in">
@@ -21,13 +33,18 @@
         />
       </div>
     </transition>
+
+    <FilterByCategorySide :openWrapperFilter.sync="openWrapperFilter" />
+    <OrderBySide :openWrapperOrder.sync="openWrapperOrder" />
   </main>
 </template>
 
 <script>
 import CardProduct from "@/components/home/HomeCardProduct.vue";
 import FilterByCategory from "@/components/home/HomeFilterByCategory.vue";
+import FilterByCategorySide from "@/components/home/HomeFilterByCategorySide.vue";
 import OrderBy from "@/components/home/HomeOrderBy.vue";
+import OrderBySide from "@/components/home/HomeOrderBySide.vue";
 
 import SkeletonCardProduct from "@/components/home/HomeCardProductSkeleton.vue";
 
@@ -36,13 +53,18 @@ export default {
   components: {
     CardProduct,
     FilterByCategory,
+    FilterByCategorySide,
     OrderBy,
+    OrderBySide,
     SkeletonCardProduct,
   },
   data() {
     return {
       products: [],
       loading: true,
+
+      openWrapperFilter: false,
+      openWrapperOrder: false,
     };
   },
   watch: {
@@ -57,6 +79,9 @@ export default {
     },
   },
   computed: {
+    currentCategoryTitle() {
+      return this.$store.state.listing.categoryTitle;
+    },
     currentCategory() {
       return this.$store.state.listing.category === "all"
         ? false
@@ -114,8 +139,29 @@ export default {
 .home__top-container {
   margin-top: 34px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  flex-direction: column;
+  gap: 10px;
+}
+.home__title {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 150%;
+  text-transform: uppercase;
+}
+.home__buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.home--button {
+  width: 100%;
+  padding: 5px 20px;
+  text-align: center;
+  border-radius: 62px;
+  background-color: var(--blue);
+  color: #f5f5fa;
+  text-transform: uppercase;
 }
 .home__grid {
   margin-top: 32px;
@@ -123,9 +169,16 @@ export default {
   grid-template-columns: 1fr;
   gap: 24px 32px;
 }
+
 @media (min-width: 480px) {
   .home__grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+@media (min-width: 768px) {
+  .home__top-container {
+    align-items: center;
+    flex-direction: row;
   }
 }
 

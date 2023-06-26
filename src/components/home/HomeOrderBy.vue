@@ -83,6 +83,11 @@ export default {
       return finalOption;
     },
   },
+  watch: {
+    $sw() {
+      this.closeOptions();
+    },
+  },
   methods: {
     handleOrdination(option, order) {
       this.$store.commit("SET_FIELD", option);

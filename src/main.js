@@ -16,6 +16,7 @@ import fetch from "./plugins/fetch.js";
 import "@/assets/css/global.css";
 import "@/assets/css/variables.css";
 import "@/assets/css/skeleton.css";
+import "@/assets/css/transitions.css";
 
 Vue.config.productionTip = false;
 Vue.use(variables);

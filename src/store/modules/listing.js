@@ -2,6 +2,7 @@ export default {
   state: () => ({
     searchWord: "",
     category: "all",
+    categoryTitle: "Todos os produtos",
     field: "",
     order: "",
   }),
@@ -11,6 +12,9 @@ export default {
     },
     SET_CATEGORY(state, payload) {
       state.category = payload;
+    },
+    SET_CATEGORY_TITLE(state, payload) {
+      state.categoryTitle = payload;
     },
     SET_FIELD(state, payload) {
       state.field = payload;

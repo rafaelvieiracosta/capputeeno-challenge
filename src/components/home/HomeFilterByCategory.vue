@@ -2,7 +2,7 @@
   <div class="categories">
     <button
       class="categories--button"
-      @click="changeCategory('all')"
+      @click="changeCategory('all', '')"
       :class="{
         active: currentCategory === 'all',
       }"
@@ -12,7 +12,7 @@
     </button>
     <button
       class="categories--button"
-      @click="changeCategory('t-shirts')"
+      @click="changeCategory('t-shirts', 'Camisetas')"
       :class="{
         active: currentCategory === 't-shirts',
       }"
@@ -22,7 +22,7 @@
     </button>
     <button
       class="categories--button"
-      @click="changeCategory('mugs')"
+      @click="changeCategory('mugs', 'Canecas')"
       :class="{
         active: currentCategory === 'mugs',
       }"
@@ -46,8 +46,9 @@ export default {
     },
   },
   methods: {
-    changeCategory(category) {
+    changeCategory(category, title) {
       this.$store.commit("SET_CATEGORY", category);
+      this.$store.commit("SET_CATEGORY_TITLE", title);
     },
   },
 };
