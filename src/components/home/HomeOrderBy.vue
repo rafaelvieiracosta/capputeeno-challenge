@@ -5,9 +5,9 @@
       :class="{ opened: showOptions }"
       @click.stop="showOptions ? closeOptions() : openOptions()"
     >
-      Ordernar por<template v-if="selectedOption">: &nbsp;</template>
+      Ordernar por<template v-if="ordination.name">: &nbsp;</template>
       <span>
-        {{ selectedOption }}
+        {{ ordination.name }}
       </span>
 
       <img
@@ -19,37 +19,67 @@
     </button>
     <ul v-show="showOptions" class="order__list" ref="listOptions">
       <li
-        v-if="selectedOption"
+        v-if="ordination.field && ordination.order"
         class="order__list-item"
-        @click="handleOrdination('', '')"
+        @click="handleOrdination({ name: '', field: '', order: '' })"
       >
         Sem ordenação
       </li>
       <li
-        v-if="selectedOption !== 'Novidades'"
+        v-if="ordination.field !== 'Novidades'"
         class="order__list-item"
-        @click="handleOrdination('created_at', 'DSC')"
+        @click="
+          handleOrdination({
+            name: 'Novidades',
+            field: 'created_at',
+            order: 'DSC',
+          })
+        "
       >
         Novidades
       </li>
       <li
-        v-if="selectedOption !== 'Preço: Maior - menor'"
+        v-if="
+          ordination.field !== 'Preço: Maior - menor' &&
+          ordination.order !== 'DSC'
+        "
         class="order__list-item"
-        @click="handleOrdination('price_in_cents', 'DSC')"
+        @click="
+          handleOrdination({
+            name: 'Preço: Maior - menor',
+            field: 'price_in_cents',
+            order: 'DSC',
+          })
+        "
       >
         Preço: Maior - menor
       </li>
       <li
-        v-if="selectedOption !== 'Preço: Menor - maior'"
+        v-if="
+          ordination.field !== 'Preço: Menor - maior' &&
+          ordination.order !== 'ASC'
+        "
         class="order__list-item"
-        @click="handleOrdination('price_in_cents', 'ASC')"
+        @click="
+          handleOrdination({
+            name: 'Preço: Menor - maior',
+            field: 'price_in_cents',
+            order: 'ASC',
+          })
+        "
       >
         Preço: Menor - maior
       </li>
       <li
-        v-if="selectedOption !== 'Mais vendidos'"
+        v-if="ordination.field !== 'Mais vendidos'"
         class="order__list-item"
-        @click="handleOrdination('sales', 'DSC')"
+        @click="
+          handleOrdination({
+            name: 'Mais vendidos',
+            field: 'sales',
+            order: 'DSC',
+          })
+        "
       >
         Mais vendidos
       </li>
@@ -65,22 +95,8 @@ export default {
     };
   },
   computed: {
-    selectedOption() {
-      const field = this.$store.state.listing.field;
-      const order = this.$store.state.listing.order;
-      let finalOption = "";
-
-      if (field === "created_at") {
-        finalOption = "Novidades";
-      } else if (field === "price_in_cents" && order === "DSC") {
-        finalOption = "Preço: Maior - menor";
-      } else if (field === "price_in_cents" && order === "ASC") {
-        finalOption = "Preço: Menor - maior";
-      } else if (field === "sales") {
-        finalOption = "Mais vendidos";
-      }
-
-      return finalOption;
+    ordination() {
+      return this.$store.state.listing.ordination;
     },
   },
   watch: {
@@ -89,9 +105,8 @@ export default {
     },
   },
   methods: {
-    handleOrdination(option, order) {
-      this.$store.commit("SET_FIELD", option);
-      this.$store.commit("SET_ORDER", order);
+    handleOrdination(option) {
+      this.$store.commit("SET_ORDINATION", option);
       this.showOptions = false;
     },
 

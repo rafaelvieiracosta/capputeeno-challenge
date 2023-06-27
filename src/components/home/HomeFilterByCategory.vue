@@ -4,7 +4,7 @@
       class="categories--button"
       @click="changeCategory('all', '')"
       :class="{
-        active: currentCategory === 'all',
+        active: currentCategory.query === 'all',
       }"
       data-title="Todos os produtos"
     >
@@ -14,7 +14,7 @@
       class="categories--button"
       @click="changeCategory('t-shirts', 'Camisetas')"
       :class="{
-        active: currentCategory === 't-shirts',
+        active: currentCategory.query === 't-shirts',
       }"
       data-title="Camisetas"
     >
@@ -24,7 +24,7 @@
       class="categories--button"
       @click="changeCategory('mugs', 'Canecas')"
       :class="{
-        active: currentCategory === 'mugs',
+        active: currentCategory.query === 'mugs',
       }"
       data-title="Canecas"
     >
@@ -47,8 +47,7 @@ export default {
   },
   methods: {
     changeCategory(category, title) {
-      this.$store.commit("SET_CATEGORY", category);
-      this.$store.commit("SET_CATEGORY_TITLE", title);
+      this.$store.commit("SET_CATEGORY", { name: title, query: category });
     },
   },
 };
@@ -85,7 +84,6 @@ export default {
   bottom: -8px;
   background-color: var(--orange-low);
   transition: 0.2s;
-
   opacity: 0;
 }
 .categories--button.active {

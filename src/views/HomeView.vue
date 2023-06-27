@@ -5,7 +5,7 @@
       <OrderBy class="home__order" :class="{ 'no-click': loading }" />
     </div>
     <div v-else class="home__top-container">
-      <h1 class="home__title">{{ currentCategoryTitle }}</h1>
+      <h1 class="home__title">{{ currentCategory.name }}</h1>
 
       <div class="home__buttons">
         <button class="home--button" @click="openWrapperFilter = true">
@@ -71,38 +71,31 @@ export default {
     "$store.state.listing.category"() {
       this.fetchProducts();
     },
-    "$store.state.listing.field"() {
-      this.fetchProducts();
-    },
-    "$store.state.listing.order"() {
+    "$store.state.listing.ordination"() {
       this.fetchProducts();
     },
   },
   computed: {
-    currentCategoryTitle() {
-      return this.$store.state.listing.categoryTitle;
-    },
     currentCategory() {
-      return this.$store.state.listing.category === "all"
-        ? false
-        : this.$store.state.listing.category;
+      return this.$store.state.listing.category;
     },
-    currentField() {
-      return this.$store.state.listing.field;
-    },
-    currentOrder() {
-      return this.$store.state.listing.order;
+    currentOrdination() {
+      return this.$store.state.listing.ordination;
     },
   },
   methods: {
     handleQuery() {
       let query;
-      if (this.currentCategory && this.currentField) {
-        query = `query { allProducts(filter: { category: "${this.currentCategory}" }, sortField: "${this.currentField}", sortOrder: "${this.currentOrder}") { id image_url name price_in_cents } }`;
-      } else if (this.currentField) {
-        query = `query { allProducts(sortField: "${this.currentField}", sortOrder: "${this.currentOrder}") { id image_url name price_in_cents } }`;
-      } else if (this.currentCategory) {
-        query = `query { allProducts(filter: { category: "${this.currentCategory}" }) { id image_url name price_in_cents } }`;
+
+      if (
+        this.currentCategory.query !== "all" &&
+        this.currentOrdination.field
+      ) {
+        query = `query { allProducts(filter: { category: "${this.currentCategory.query}" }, sortField: "${this.currentOrdination.field}", sortOrder: "${this.currentOrdination.order}") { id image_url name price_in_cents } }`;
+      } else if (this.currentOrdination.field) {
+        query = `query { allProducts(sortField: "${this.currentOrdination.field}", sortOrder: "${this.currentOrdination.order}") { id image_url name price_in_cents } }`;
+      } else if (this.currentCategory.query !== "all") {
+        query = `query { allProducts(filter: { category: "${this.currentCategory.query}" }) { id image_url name price_in_cents } }`;
       } else {
         query =
           "query { allProducts { id image_url name price_in_cents category } }";
@@ -135,7 +128,6 @@ export default {
   opacity: 0.7;
   pointer-events: none;
 }
-
 .home__top-container {
   margin-top: 34px;
   display: flex;
@@ -169,7 +161,6 @@ export default {
   grid-template-columns: 1fr;
   gap: 24px 32px;
 }
-
 @media (min-width: 480px) {
   .home__grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -180,13 +171,5 @@ export default {
     align-items: center;
     flex-direction: row;
   }
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 365ms;
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
 }
 </style>

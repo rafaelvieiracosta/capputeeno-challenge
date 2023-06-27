@@ -118,8 +118,9 @@ export default {
   },
   computed: {
     currentOrder() {
-      return this.$store.state.listing.field && this.$store.state.listing.order
-        ? `${this.$store.state.listing.field}--${this.$store.state.listing.order}`
+      return this.$store.state.listing.ordination.field &&
+        this.$store.state.listing.ordination.order
+        ? `${this.$store.state.listing.ordination.field}--${this.$store.state.listing.ordination.order}`
         : "";
     },
   },
@@ -133,8 +134,7 @@ export default {
       const field = this.order.split("--")[0];
       const order = this.order.split("--")[1];
 
-      this.$store.commit("SET_FIELD", field);
-      this.$store.commit("SET_ORDER", order);
+      this.$store.commit("SET_ORDINATION", { name: "", field, order });
       this.closeFilter();
     },
 
